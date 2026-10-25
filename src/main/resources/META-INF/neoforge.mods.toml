@@ -1,0 +1,27 @@
+modLoader="javafml"
+loaderVersion="[4,)"
+license="MIT"
+[[mods]]
+modId="vanilla_m16"
+version="1.0.0"
+displayName="Vanilla M16"
+authors="You"
+description='''A vanilla-style M16 item with projectile firing, a 30-round magazine, and manual reloading.'''
+[[dependencies.vanilla_m16]]
+modId="geckolib"
+type="required"
+versionRange="[4.9.3,)"
+ordering="AFTER"
+side="BOTH"
+[[dependencies.vanilla_m16]]
+modId="neoforge"
+type="required"
+versionRange="[21.1.172,)"
+ordering="NONE"
+side="BOTH"
+[[dependencies.vanilla_m16]]
+modId="minecraft"
+type="required"
+versionRange="[1.21.1,1.21.2)"
+ordering="NONE"
+side="BOTH"
