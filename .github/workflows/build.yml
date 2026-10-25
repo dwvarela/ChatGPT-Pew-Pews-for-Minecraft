@@ -57,6 +57,23 @@ jobs:
         with:
           gradle-version: "8.10.2"
 
+      - name: Apply GeckoLib 4 renderer import fix
+        working-directory: workspace/ChatGPT-Pew-Pew-for-Minecraft
+        shell: python
+        run: |
+          from pathlib import Path
+          path = Path("src/main/java/com/example/boltrifle/GeoModelItem.java")
+          source = path.read_text(encoding="utf-8")
+          old = "software.bernie.geckolib.renderer.GeoRenderProvider"
+          new = "software.bernie.geckolib.animatable.client.GeoRenderProvider"
+          if old in source:
+              path.write_text(source.replace(old, new), encoding="utf-8")
+              print("Updated GeoRenderProvider import for GeckoLib 4.")
+          elif new in source:
+              print("GeckoLib renderer import already fixed.")
+          else:
+              raise SystemExit("GeoRenderProvider import not found; inspect source before building.")
+
       - name: Validate resource references
         working-directory: workspace/ChatGPT-Pew-Pew-for-Minecraft
         run: python validate_project.py
