@@ -6,6 +6,7 @@ on:
     branches: ["main", "master"]
     paths:
       - "ChatGPT-Pew-Pew-recovery-workspace.zip"
+      - "ChatGPT-Pew-Pew-complete-project.zip"
 
 permissions:
   contents: read
@@ -17,16 +18,22 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Check for project archive
+      - name: Locate project archive
+        id: archive
+        shell: bash
         run: |
-          if [ ! -f ChatGPT-Pew-Pew-recovery-workspace.zip ]; then
-            echo "::error::Upload ChatGPT-Pew-Pew-recovery-workspace.zip to the repository root first."
+          if [ -f ChatGPT-Pew-Pew-recovery-workspace.zip ]; then
+            echo "file=ChatGPT-Pew-Pew-recovery-workspace.zip" >> "$GITHUB_OUTPUT"
+          elif [ -f ChatGPT-Pew-Pew-complete-project.zip ]; then
+            echo "file=ChatGPT-Pew-Pew-complete-project.zip" >> "$GITHUB_OUTPUT"
+          else
+            echo "::error::Upload ChatGPT-Pew-Pew-complete-project.zip or ChatGPT-Pew-Pew-recovery-workspace.zip to the repository root."
             exit 1
           fi
 
       - name: Extract project workspace
         run: |
-          unzip -q ChatGPT-Pew-Pew-recovery-workspace.zip -d workspace
+          unzip -q "${{ steps.archive.outputs.file }}" -d workspace
           test -f workspace/ChatGPT-Pew-Pew-for-Minecraft/build.gradle
           test -f workspace/ChatGPT-Pew-Pew-for-Minecraft/settings.gradle
 
