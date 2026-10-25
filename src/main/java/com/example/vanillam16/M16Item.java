@@ -5,6 +5,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.item.Item;
@@ -31,7 +32,7 @@ public class M16Item extends Item {
             }
             player.getInventory().getItem(slot).shrink(1);
             rifle.setDamageValue(0);
-            level.playSound(null, player.blockPosition(), SoundEvents.ARMOR_EQUIP_IRON, SoundSource.PLAYERS, 0.8F, 1.25F);
+            player.playSound(SoundEvents.ARMOR_EQUIP_IRON.value(), 0.8F, 1.25F);
             player.displayClientMessage(net.minecraft.network.chat.Component.literal("M16 reloaded: 30 rounds."), true);
             return InteractionResultHolder.consume(rifle);
         }
@@ -40,7 +41,9 @@ public class M16Item extends Item {
             return InteractionResultHolder.fail(rifle);
         }
         if (!level.isClientSide) {
-            Arrow bullet = new Arrow(level, player);
+            Arrow bullet = new Arrow(EntityType.ARROW, level);
+            bullet.setOwner(player);
+            bullet.setPos(player.getX(), player.getEyeY() - 0.1D, player.getZ());
             bullet.setBaseDamage(5.0);
             bullet.setCritArrow(false);
             bullet.pickup = Arrow.Pickup.DISALLOWED;
