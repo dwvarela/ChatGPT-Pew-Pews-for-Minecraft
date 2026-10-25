@@ -7,6 +7,7 @@ on:
     paths:
       - "ChatGPT-Pew-Pew-recovery-workspace.zip"
       - "ChatGPT-Pew-Pew-complete-project.zip"
+      - "ChatGPT-Pew-Pew-source-download.zip"
 
 permissions:
   contents: read
@@ -22,12 +23,14 @@ jobs:
         id: archive
         shell: bash
         run: |
-          if [ -f ChatGPT-Pew-Pew-recovery-workspace.zip ]; then
+          if [ -f ChatGPT-Pew-Pew-source-download.zip ]; then
+            echo "file=ChatGPT-Pew-Pew-source-download.zip" >> "$GITHUB_OUTPUT"
+          elif [ -f ChatGPT-Pew-Pew-recovery-workspace.zip ]; then
             echo "file=ChatGPT-Pew-Pew-recovery-workspace.zip" >> "$GITHUB_OUTPUT"
           elif [ -f ChatGPT-Pew-Pew-complete-project.zip ]; then
             echo "file=ChatGPT-Pew-Pew-complete-project.zip" >> "$GITHUB_OUTPUT"
           else
-            echo "::error::Upload ChatGPT-Pew-Pew-complete-project.zip or ChatGPT-Pew-Pew-recovery-workspace.zip to the repository root."
+            echo "::error::No ChatGPT Pew Pew project ZIP found in the repository root."
             exit 1
           fi
 
