@@ -1,27 +1,67 @@
-name: Build M16 mod
+name: Build ChatGPT Pew Pew for Minecraft
+
 on:
   workflow_dispatch:
   push:
-    branches: [ "main", "master" ]
+    branches: ["main", "master"]
+    paths:
+      - "ChatGPT-Pew-Pew-recovery-workspace.zip"
+
 permissions:
   contents: read
-  actions: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Check for project archive
+        run: |
+          if [ ! -f ChatGPT-Pew-Pew-recovery-workspace.zip ]; then
+            echo "::error::Upload ChatGPT-Pew-Pew-recovery-workspace.zip to the repository root first."
+            exit 1
+          fi
+
+      - name: Extract project workspace
+        run: |
+          unzip -q ChatGPT-Pew-Pew-recovery-workspace.zip -d workspace
+          test -f workspace/ChatGPT-Pew-Pew-for-Minecraft/build.gradle
+          test -f workspace/ChatGPT-Pew-Pew-for-Minecraft/settings.gradle
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '21'
-      - uses: gradle/actions/setup-gradle@v4
+          java-version: "21"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          gradle-version: '8.10.2'
+          python-version: "3.12"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.10.2"
+
+      - name: Validate resource references
+        working-directory: workspace/ChatGPT-Pew-Pew-for-Minecraft
+        run: python validate_project.py
+
+      - name: Validate animation assets
+        working-directory: workspace/ChatGPT-Pew-Pew-for-Minecraft
+        run: python validate_animation_assets.py
+
       - name: Build mod JAR
+        working-directory: workspace/ChatGPT-Pew-Pew-for-Minecraft
         run: gradle --no-daemon build
-      - uses: actions/upload-artifact@v4
+
+      - name: Upload mod JAR
+        uses: actions/upload-artifact@v4
         with:
-          name: vanilla-m16-jar
-          path: build/libs/*.jar
+          name: chatgpt-pew-pew-for-minecraft
+          path: workspace/ChatGPT-Pew-Pew-for-Minecraft/build/libs/*.jar
           if-no-files-found: error
+          retention-days: 30
