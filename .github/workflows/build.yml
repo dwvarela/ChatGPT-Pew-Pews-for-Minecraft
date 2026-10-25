@@ -5,6 +5,7 @@ on:
   push:
     branches: ["main", "master"]
     paths:
+      - ".github/workflows/build.yml"
       - "ChatGPT-Pew-Pew-recovery-workspace.zip"
       - "ChatGPT-Pew-Pew-complete-project.zip"
       - "ChatGPT-Pew-Pew-source-download.zip"
